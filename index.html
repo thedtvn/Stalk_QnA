@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The DT QnA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        * {
+            box-sizing: border-box;
+            color: #FDFFF5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .body {
+            background-color: #4158D0;
+            background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            margin: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px) brightness(0.8);
+            align-items: center;
+        }
+        h1, h2 {
+            margin-bottom: 1px;
+        }
+        #question {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #FDFFF5;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #ask {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #34343439;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #ask:hover {
+            background-color: #34343458;
+            transform: scale(1.1);
+        }
+        
+        #ask:active:not(:disabled) {
+            background-color: #34343475;
+            transform: scale(0.9);
+        }
+
+        #ask:disabled {
+            filter: brightness(0.5);
+            cursor: not-allowed;
+        }
+
+        .error {
+            display: none;
+            background-color: rgb(255, 0, 0);
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 3px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        p {
+            margin: 0;
+            font-size: 14px;
+            color: #FDFFF5;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <template id="message-template">
+        <h1>The DT QnA</h1>
+        <p>Hỏi gì cũng được 😊</p>
+        <input type="text" id="question" placeholder="Nhập câu hỏi của bạn">
+        <div id="err" class="error"></div>
+        <button id="ask">Gửi câu hỏi</button>
+    </template>
+    <template id="ok-template">
+        <h2 style="margin: 0;">Cảm ơn bạn đã hỏi!</h2>
+        <p>The DT sẽ trả lời câu hỏi của bạn trong thời gian sớm nhất.</p>
+        <button id="ask">Gửi câu hỏi khác</button>
+    </template>
+    <div class="body">
+        <div id="container">
+        </div>
+    </div>
+    <script src="/static/index.js"></script>
+</body>
+</html>
