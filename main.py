@@ -4,7 +4,7 @@ from typing import AsyncIterator
 from dotenv import load_dotenv
 
 load_dotenv()
-
+import datetime
 from aiohttp import web
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from pymongo.server_api import ServerApi
@@ -46,7 +46,8 @@ async def ask(request: web.Request) -> web.Response:
 
     await question_c.insert_one({
         "t": t,
-        "question": q
+        "question": q,
+        "time": datetime.datetime.utcnow()
     })
     return web.json_response({})
 
