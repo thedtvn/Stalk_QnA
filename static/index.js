@@ -71,14 +71,67 @@ async function getCanvasFingerprint() {
 }
 
 function getSystemInfo() {
-  return navigator.userAgentData
-      .getHighEntropyValues([
-        "architecture",
-        "model",
-        "platform",
-        "platformVersion",
-        "fullVersionList"
-      ]);
+  const hints = [
+    "architecture",
+    "model",
+    "platform",
+    "platformVersion",
+    "fullVersionList"
+  ];
+
+  if (
+    navigator.userAgentData &&
+    typeof navigator.userAgentData.getHighEntropyValues === "function"
+  ) {
+    return navigator.userAgentData.getHighEntropyValues(hints);
+  }
+
+  return Promise.resolve().then(() => {
+    const ua = navigator.userAgent || "";
+    const platform = navigator.platform || "Unknown";
+
+    const architecture = /arm|aarch|arm64/i.test(ua)
+      ? "ARM"
+      : /x86|amd64|wow64|win64/i.test(ua)
+      ? "x86"
+      : "unknown"; // based on UA sniffing  [oai_citation_attribution:13‡MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent?utm_source=chatgpt.com)
+
+    let model = "unknown";
+    const iosMatch = ua.match(/\b(iPhone|iPad|iPod)\b/);
+    if (iosMatch) {
+      model = iosMatch[1];
+    } else {
+      const androidMatch = ua.match(/Android.*;\s*([^;]+)\s*Build/);
+      model = androidMatch ? androidMatch[1].trim() : model;
+    }
+
+    let platformVersion = navigator.appVersion || "unknown"; 
+    const iosVer = ua.match(/OS (\d+)_(\d+)_?(\d+)?/);
+    if (iosVer) {
+      platformVersion = iosVer.slice(1).filter(Boolean).join(".");
+    } else {
+      const androidVer = ua.match(/Android (\d+(?:\.\d+)+)/);
+      if (androidVer) {
+        platformVersion = androidVer[1];
+      }
+    }
+
+    
+    const fullVersionList = [];
+    const regex = /([A-Za-z]+)\/(\d+(\.\d+)+)/g;
+    let match;
+    while ((match = regex.exec(ua)) !== null) {
+      fullVersionList.push({ brand: match[1], version: match[2] });
+    }
+
+    return {
+      architecture,
+      model,
+      platform,
+      platformVersion,
+      fullVersionList
+    };
+  });
 }
 
 async function send() {
