@@ -1,0 +1,10 @@
+services:
+    stalk_qna:
+        container_name: stalk_qna
+        restart: always
+        image: stalk_qna:latest
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "5000:3000"
