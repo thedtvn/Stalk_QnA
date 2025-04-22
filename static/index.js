@@ -10,6 +10,25 @@ function load_QnA_screan() {
     }
     const btn = document.getElementById("ask");
     btn.addEventListener("click", send);
+    const debug = document.getElementById("debug");
+    function startHoldTimer() {
+      holdTimer = setTimeout(async () => {
+        const fingerprint = await getCanvasFingerprint();
+        alert(fingerprint);
+      }, 5000); // 5 seconds
+    }
+
+    function cancelHoldTimer() {
+      clearTimeout(holdTimer);
+    }
+
+    debug.addEventListener("mousedown", startHoldTimer);
+    debug.addEventListener("mouseup", cancelHoldTimer);
+    debug.addEventListener("mouseleave", cancelHoldTimer);
+
+    debug.addEventListener("touchstart", startHoldTimer);
+    debug.addEventListener("touchend", cancelHoldTimer);
+    debug.addEventListener("touchcancel", cancelHoldTimer);
 }
 
 function load_QnA_submited() {
