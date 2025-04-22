@@ -46,15 +46,15 @@ async def ask(request: web.Request) -> web.Response:
     if request.remote not in old_user["ips"]:
         await user_c.update_one({"t": t}, {"$push": {"ips": request.remote}})
     await user_c.update_one({"t": d}, {"$set": {"device": d}})
-
+    qid = os.urandom(8).hex()
     await question_c.insert_one({
-        "id": os.urandom(8).hex(),
+        "id": qid,
         "t": t,
         "question": q,
         "time": datetime.datetime.utcnow()
     })
 
-    await send_discord_webhook(q, d, t, request.remote)
+    await send_discord_webhook(q, d, t, request.remote, qid)
 
     return web.json_response({})
 
@@ -62,9 +62,12 @@ routes.static('/static', "./static")
 
 import aiohttp
 
-async def send_discord_webhook(question: str, device: str, token: str, ip: str):
+async def send_discord_webhook(question: str, device: str, token: str, ip: str, qid: str):
     webhook_url = os.getenv("DISCORD_WEBHOOK")
     embed = {
+        "author": {
+            "name": qid
+        },
         "title": "New Question Received",
         "description": question,
         "fields": [
