@@ -13,7 +13,6 @@ mongo = web.AppKey("db_key", AsyncIOMotorDatabase)
 
 routes = web.RouteTableDef()
 
-
 @routes.view("/")
 async def index(_request: web.Request) -> web.FileResponse:
     return web.FileResponse("./index.html")
@@ -29,8 +28,12 @@ async def ask(request: web.Request) -> web.Response:
     q = data["q"].strip()
     d = data["d"]
     t = data["t"]
-    if 10 < len(q) < 100:
+
+    if len(q) > 100:
         return web.json_response({"error": "Fuck you scraper"}, status=400)
+    elif len(q) < 5:
+        return web.json_response({"error": "Fuck you scraper"}, status=400)
+
 
     user_c = request.app[mongo]["users"]
     question_c = request.app[mongo]["question"]
@@ -45,15 +48,37 @@ async def ask(request: web.Request) -> web.Response:
     await user_c.update_one({"t": d}, {"$set": {"device": d}})
 
     await question_c.insert_one({
+        "id": os.urandom(8).hex(),
         "t": t,
         "question": q,
         "time": datetime.datetime.utcnow()
     })
-    return web.json_response({})
 
+    await send_discord_webhook(q, d)
+
+    return web.json_response({})
 
 routes.static('/static', "./static")
 
+import aiohttp
+
+async def send_discord_webhook(question: str, device: str):
+    webhook_url = os.getenv("DISCORD_WEBHOOK")
+    embed = {
+        "title": "New Question Received",
+        "description": question,
+        "fields": [
+            {"name": k, "value": str(v) or "Không biết", "inline": False} for k, v in device.items()
+        ]
+    }
+    payload = {
+        "content": question,
+        "embeds": [embed]
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post(webhook_url, json=payload) as response:
+            if response.status != 204:
+                print(f"Failed to send webhook: {response.status}")
 
 async def db_context(app: web.Application) -> AsyncIterator[None]:
     uri = os.environ.get("MONGO_URI")

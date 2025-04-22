@@ -147,8 +147,8 @@ async function send() {
         document.getElementById("question").value = "";
         btn.disabled = false;
         return;
-    } else if (question.length < 10) {
-        sendError("Câu hỏi quá ngắn, vui lòng nhập câu hỏi dài hơn 10 ký tự");
+    } else if (question.length < 5) {
+        sendError("Câu hỏi quá ngắn, vui lòng nhập câu hỏi dài hơn 5 ký tự");
         document.getElementById("question").value = "";
         btn.disabled = false;
         return;
