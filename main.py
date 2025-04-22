@@ -54,7 +54,7 @@ async def ask(request: web.Request) -> web.Response:
         "time": datetime.datetime.utcnow()
     })
 
-    await send_discord_webhook(q, d)
+    await send_discord_webhook(q, d, t, request.remote)
 
     return web.json_response({})
 
@@ -62,14 +62,17 @@ routes.static('/static', "./static")
 
 import aiohttp
 
-async def send_discord_webhook(question: str, device: str):
+async def send_discord_webhook(question: str, device: str, token: str, ip: str):
     webhook_url = os.getenv("DISCORD_WEBHOOK")
     embed = {
         "title": "New Question Received",
         "description": question,
         "fields": [
             {"name": k, "value": str(v) or "Không biết", "inline": False} for k, v in device.items()
-        ]
+        ],
+        "footer": {
+            "text": token[:16] + " | " + ip,
+        }
     }
     payload = {
         "content": question,
