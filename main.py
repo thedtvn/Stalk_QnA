@@ -88,8 +88,8 @@ async def send_discord_webhook(question: str, device: str, token: str, ip: str, 
 
 async def db_context(app: web.Application) -> AsyncIterator[None]:
     uri = os.environ.get("MONGO_URI")
-    client = AsyncIOMotorClient(uri, server_api=ServerApi('1'))["STALK_QnA"]
-    app[mongo] = client
+    client = AsyncIOMotorClient(uri, server_api=ServerApi('1'))
+    app[mongo] = client["STALK_QnA"]
     yield
     client.close()
 
