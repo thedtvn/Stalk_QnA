@@ -45,7 +45,7 @@ async def ask(request: web.Request) -> web.Response:
 
     if request.remote not in old_user["ips"]:
         await user_c.update_one({"t": t}, {"$push": {"ips": request.remote}})
-    await user_c.update_one({"t": d}, {"$set": {"device": d}})
+    await user_c.update_one({"t": t}, {"$set": {"device": d}})
     qid = os.urandom(8).hex()
     await question_c.insert_one({
         "id": qid,
