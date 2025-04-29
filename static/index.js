@@ -113,8 +113,7 @@ function getSystemInfo() {
       ? "ARM"
       : /x86|amd64|wow64|win64/i.test(ua)
       ? "x86"
-      : "unknown"; // based on UA sniffing  [oai_citation_attribution:13‡MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent?utm_source=chatgpt.com)
-
+      : "unknown";
     let model = "unknown";
     const iosMatch = ua.match(/\b(iPhone|iPad|iPod)\b/);
     if (iosMatch) {
